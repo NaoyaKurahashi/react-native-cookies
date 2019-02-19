@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Arrays;
 
 public class CookieManagerModule extends ReactContextBaseJavaModule {
 
@@ -40,7 +41,8 @@ public class CookieManagerModule extends ReactContextBaseJavaModule {
     public void setFromResponse(String url, String value, final Promise promise) throws URISyntaxException, IOException {
         Map headers = new HashMap<String, List<String>>();
         // Pretend this is a header
-        headers.put("Set-Cookie", Collections.singletonList(value));
+        value = value.replaceAll(" ", "");;
+        headers.put("Set-Cookie", Arrays.asList(value.split(";")));
         URI uri = new URI(url);
         try {
             this.cookieHandler.put(uri, headers);
