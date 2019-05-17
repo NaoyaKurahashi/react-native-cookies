@@ -61,7 +61,7 @@ public class CookieManagerModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void get(String url, boolean useWebKit, Promise promise) throws URISyntaxException, IOException {
+    public void get(String url, String domain, boolean useWebKit, Promise promise) throws URISyntaxException, IOException {
         URI uri = new URI(url);
 
         Map<String, List<String>> cookieMap = this.cookieHandler.get(uri, new HashMap());
