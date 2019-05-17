@@ -100,27 +100,28 @@ RCT_EXPORT_METHOD(getFromResponse:(NSURL *)url
     }];
 }
 
--(NSString *)getDomainName:(NSURL *) url
-{
-    NSString *separator = @".";
-    NSInteger maxLength = 2;
-
-    NSURLComponents *components = [[NSURLComponents alloc]initWithURL:url resolvingAgainstBaseURL:FALSE];
-    NSArray<NSString *> *separatedHost = [components.host componentsSeparatedByString:separator];
-    NSInteger count = [separatedHost count];
-    NSInteger endPosition = count;
-    NSInteger startPosition = count - maxLength;
-
-    NSMutableString *result = [[NSMutableString alloc]init];
-    for (NSUInteger i = startPosition; i != endPosition; i++) {
-        [result appendString:separator];
-        [result appendString:[separatedHost objectAtIndex:i]];
-    }
-    return result;
-}
+//-(NSString *)getDomainName:(NSURL *) url
+//{
+//    NSString *separator = @".";
+//    NSInteger maxLength = 2;
+//
+//    NSURLComponents *components = [[NSURLComponents alloc]initWithURL:url resolvingAgainstBaseURL:FALSE];
+//    NSArray<NSString *> *separatedHost = [components.host componentsSeparatedByString:separator];
+//    NSInteger count = [separatedHost count];
+//    NSInteger endPosition = count;
+//    NSInteger startPosition = count - maxLength;
+//
+//    NSMutableString *result = [[NSMutableString alloc]init];
+//    for (NSUInteger i = startPosition; i != endPosition; i++) {
+//        [result appendString:separator];
+//        [result appendString:[separatedHost objectAtIndex:i]];
+//    }
+//    return result;
+//}
 
 RCT_EXPORT_METHOD(
     get:(NSURL *) url
+    domain:(NSString *)domain
     useWebKit:(BOOL)useWebKit
     resolver:(RCTPromiseResolveBlock)resolve
     rejecter:(RCTPromiseRejectBlock)reject)
@@ -128,13 +129,11 @@ RCT_EXPORT_METHOD(
     if (useWebKit) {
         if (@available(iOS 11.0, *)) {
             dispatch_async(dispatch_get_main_queue(), ^(){
-                NSString *topLevelDomain = [self getDomainName:url];
-
                 WKHTTPCookieStore *cookieStore = [[WKWebsiteDataStore defaultDataStore] httpCookieStore];
                 [cookieStore getAllCookies:^(NSArray<NSHTTPCookie *> *allCookies) {
                     NSMutableDictionary *cookies = [NSMutableDictionary dictionary];
                     for(NSHTTPCookie *currentCookie in allCookies) {
-                        if([currentCookie.domain containsString:topLevelDomain]) {
+                        if([currentCookie.domain containsString:domain]) {
                             [cookies setObject:currentCookie.value forKey:currentCookie.name];
                         }
                     }
